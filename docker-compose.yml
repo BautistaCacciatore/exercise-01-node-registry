@@ -1,8 +1,25 @@
-# TODO: Define your services
-#
-# Requirements:
-# - Service "db": PostgreSQL (postgres:16-alpine)
-# - Service "api": your Dockerfile, depends on db
-# - api exposes port 8080 on the host
-# - Use environment variables from .env for DB credentials
-# - Do NOT hardcode passwords in this file
+services:
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U noderegistry"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

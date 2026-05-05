@@ -10,5 +10,17 @@ Table: nodes
 - created_at: TIMESTAMP DEFAULT NOW()
 - updated_at: TIMESTAMP DEFAULT NOW()
 """
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.sql import func
+from src.database import Base
 
-# TODO: Implement your SQLAlchemy model here
+class Node(Base):
+    __tablename__ = "nodes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False)
+    host = Column(String, nullable=False)
+    port = Column(Integer, nullable=False)
+    status = Column(String, nullable=False, default="active")
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
